@@ -79,14 +79,21 @@ class _HomepageState extends State<Homepage> {
                         )
                       ],
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: ColorConstants.primary_white.withOpacity(.1)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Icon(
-                          Icons.notification_important_outlined,
-                          color: ColorConstants.primary_white,
+                    InkWell(
+                      onTap: () {
+                        context.read<HomepageController>().deleteAllNotes();
+                        log("deleted");
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                ColorConstants.primary_white.withOpacity(.1)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Icon(
+                            Icons.notification_important_outlined,
+                            color: ColorConstants.primary_white,
+                          ),
                         ),
                       ),
                     ),
@@ -161,10 +168,13 @@ class _HomepageState extends State<Homepage> {
                     ),
                     key: ValueKey<int>(HomepageController.keyList[index]),
                     onDismissed: (DismissDirection direction) {
-                      context
-                          .read<HomepageController>()
-                          .delete(HomepageController.keyList[index]);
+                      context.read<HomepageController>().delete(
+                          HomepageController.keyList[index],
+                          currentElement["type"],
+                          currentElement["amount"]);
                       log("deleted");
+                      log("type---${currentElement["type"]}");
+                      log("amount--${currentElement["amount"]}");
                     },
                     child: TranscaionCard(
                       amount: currentElement["amount"],
@@ -172,6 +182,7 @@ class _HomepageState extends State<Homepage> {
                       name: currentElement["name"] ?? "",
                       type: currentElement["type"] ?? "",
                       index: index,
+                      imageIndex: currentElement["imageIndex"],
                     ),
                   );
                 } else {

@@ -17,89 +17,93 @@ class ExpenseCard extends StatelessWidget {
       decoration: BoxDecoration(
           color: ColorConstants.container_color,
           borderRadius: BorderRadius.circular(20)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Total Balance",
-                  style: TextStyle(
-                      color: ColorConstants.primary_white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20)),
-              Text(
-                  HomepageController.myBox.get("totalbalance") == null
-                      ? "0"
-                      : "₹ " +
-                          "${HomepageController.myBox.get("totalbalance")}",
-                  style: TextStyle(
-                      color: ColorConstants.primary_white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30))
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_circle_down_rounded,
-                        color: ColorConstants.primary_white.withOpacity(.6),
-                        size: 20,
-                      ),
-                      Text(" Income",
-                          style: TextStyle(
+      child: Consumer<HomepageController>(
+        builder: (context, value, child) => Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Total Balance",
+                    style: TextStyle(
+                        color: ColorConstants.primary_white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20)),
+                Text(
+                    HomepageController.myBox.get("totalbalance") == null
+                        ? "0"
+                        : "₹ " +
+                            "${HomepageController.myBox.get("totalbalance")}",
+                    style: TextStyle(
+                        color: ColorConstants.primary_white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30))
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.arrow_circle_down_rounded,
+                          color: ColorConstants.primary_white.withOpacity(.6),
+                          size: 20,
+                        ),
+                        Text(" Income",
+                            style: TextStyle(
+                              color: ColorConstants.primary_white,
+                            ))
+                      ],
+                    ),
+                    Text(
+                        HomepageController.myBox.get("income") == null
+                            ? "0"
+                            : "₹ " +
+                                "${HomepageController.myBox.get("income")}",
+                        style: TextStyle(
                             color: ColorConstants.primary_white,
-                          ))
-                    ],
-                  ),
-                  Text(
-                      HomepageController.myBox.get("income") == null
-                          ? "0"
-                          : "₹ " + "${HomepageController.myBox.get("income")}",
-                      style: TextStyle(
-                          color: ColorConstants.primary_white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20))
-                ],
-              ),
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_circle_down_rounded,
-                        color: ColorConstants.primary_white.withOpacity(.6),
-                        size: 20,
-                      ),
-                      Text(" Expense",
-                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20))
+                  ],
+                ),
+                Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.arrow_circle_down_rounded,
+                          color: ColorConstants.primary_white.withOpacity(.6),
+                          size: 20,
+                        ),
+                        Text(" Expense",
+                            style: TextStyle(
+                              color: ColorConstants.primary_white,
+                            ))
+                      ],
+                    ),
+                    Text(
+                        HomepageController.myBox.get("expense") == null
+                            ? "0"
+                            : "₹ " +
+                                "${HomepageController.myBox.get("expense")}",
+                        style: TextStyle(
                             color: ColorConstants.primary_white,
-                          ))
-                    ],
-                  ),
-                  Text(
-                      HomepageController.myBox.get("expense") == null
-                          ? "0"
-                          : "₹ " + "${HomepageController.myBox.get("expense")}",
-                      style: TextStyle(
-                          color: ColorConstants.primary_white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20))
-                ],
-              ),
-            ],
-          ),
-        ],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20))
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

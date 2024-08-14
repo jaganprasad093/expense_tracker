@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:expense_tracker/controller/homepage_controller.dart';
 import 'package:expense_tracker/core/constants/color_constants.dart';
+import 'package:expense_tracker/core/constants/image_constants.dart';
+import 'package:expense_tracker/view/add_expense/widgets/category_card.dart';
 import 'package:expense_tracker/view/bottom_navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +21,10 @@ class _AddExpenseState extends State<AddExpense> {
   TextEditingController name_controller = TextEditingController();
   TextEditingController amount_controller = TextEditingController();
   TextEditingController date_controller = TextEditingController();
+  TextEditingController description_controller = TextEditingController();
   String? selectedName;
   String? selectedType;
-
+  var selectedimage = ImageConstants.common;
   final _formKey = GlobalKey<FormState>();
   final List<String> name_list = [
     "travel",
@@ -32,6 +35,7 @@ class _AddExpenseState extends State<AddExpense> {
     "INCOME",
     "EXPENSE",
   ];
+  bool isEnabled = false;
   @override
   void initState() {
     super.initState();
@@ -76,6 +80,43 @@ class _AddExpenseState extends State<AddExpense> {
                     fontWeight: FontWeight.bold,
                     color: ColorConstants.primary_white),
               ),
+              actions: [
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.add),
+                  iconColor: ColorConstants.primary_white,
+                  onSelected: (value) async {
+                    if (value == 'INCOME') {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryCard(
+                              value: true,
+                            ),
+                          ));
+                    } else if (value == 'EXPENSE') {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryCard(
+                              value: false,
+                            ),
+                          ));
+                    }
+                  },
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        value: 'INCOME',
+                        child: Text("INCOME"),
+                      ),
+                      PopupMenuItem(
+                        value: 'EXPENSE',
+                        child: Text("EXPENSE"),
+                      ),
+                    ];
+                  },
+                ),
+              ],
               expandedHeight: 50,
             ),
             SliverToBoxAdapter(
@@ -100,7 +141,7 @@ class _AddExpenseState extends State<AddExpense> {
                     right: 20,
                     left: 20,
                     child: Container(
-                      height: 550,
+                      height: 600,
                       width: 400,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -125,6 +166,11 @@ class _AddExpenseState extends State<AddExpense> {
                                         .withOpacity(.5)),
                               ),
                               DropdownButtonFormField(
+                                onTap: () {
+                                  setState(() {
+                                    isEnabled = true;
+                                  });
+                                },
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
@@ -159,8 +205,11 @@ class _AddExpenseState extends State<AddExpense> {
                                       : null;
                                 },
                               ),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Text(
-                                "NAME",
+                                "CATEGORY",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: ColorConstants.primary_black
@@ -176,25 +225,38 @@ class _AddExpenseState extends State<AddExpense> {
                                       borderSide: BorderSide(
                                           color:
                                               ColorConstants.container_color)),
-                                  hintText: "Name",
+                                  hintText: "Category",
                                   fillColor: ColorConstants.container_color,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
                                 value: selectedName,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedName = newValue;
-                                  });
-                                },
-                                items: name_list.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                onChanged: isEnabled == true
+                                    ? (String? newValue) {
+                                        setState(() {
+                                          selectedName = newValue;
+                                          ;
+                                        });
+                                      }
+                                    : null,
+                                items: selectedType == "INCOME"
+                                    ? HomepageController.income_list
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList()
+                                    : HomepageController.expense_list
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                 validator: (String? value) {
                                   return (value == null || value.isEmpty)
                                       ? 'Please select name'
@@ -212,9 +274,14 @@ class _AddExpenseState extends State<AddExpense> {
                                         .withOpacity(.5)),
                               ),
                               TextFormField(
+                                enabled: isEnabled,
                                 keyboardType: TextInputType.number,
                                 controller: amount_controller,
                                 decoration: InputDecoration(
+                                  disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              ColorConstants.container_color)),
                                   enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
@@ -246,8 +313,13 @@ class _AddExpenseState extends State<AddExpense> {
                                         .withOpacity(.5)),
                               ),
                               TextFormField(
+                                enabled: isEnabled,
                                 controller: date_controller,
                                 decoration: InputDecoration(
+                                  disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              ColorConstants.container_color)),
                                   enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                           color:
@@ -266,11 +338,53 @@ class _AddExpenseState extends State<AddExpense> {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
+                                onTap: () =>
+                                    selectDate(context, date_controller),
                                 validator: (String? value) {
                                   return (value == null || value.isEmpty)
                                       ? 'Please enter a date'
                                       : null;
                                 },
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "DESCRIPTION",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: ColorConstants.primary_black
+                                        .withOpacity(.5)),
+                              ),
+                              TextFormField(
+                                enabled: isEnabled,
+                                controller: description_controller,
+                                decoration: InputDecoration(
+                                  disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              ColorConstants.container_color)),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 40, horizontal: 10),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              ColorConstants.container_color)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color:
+                                              ColorConstants.container_color)),
+                                  hintText: "Description",
+                                  fillColor: ColorConstants.container_color,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                // validator: (String? value) {
+                                //   return (value == null || value.isEmpty)
+                                //       ? 'Please enter an description'
+                                //       : null;
+                                // },
                               ),
                               SizedBox(
                                 height: 40,
@@ -283,32 +397,79 @@ class _AddExpenseState extends State<AddExpense> {
                                   //       .deleteAllNotes();
                                   // },
                                   onTap: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      await context
-                                          .read<HomepageController>()
-                                          .addData(
-                                              name: selectedName ?? "",
-                                              type: selectedType ?? "",
-                                              amount: int.tryParse(
-                                                      amount_controller.text) ??
-                                                  0,
-                                              date: date_controller.text);
-                                    }
-                                    context
-                                        .read<HomepageController>()
-                                        .total_balance(
-                                            selectedType ?? "",
-                                            int.tryParse(
-                                                    amount_controller.text) ??
-                                                0);
+                                    if (widget.isEdit == true) {
+                                      if (_formKey.currentState!.validate()) {
+                                        context
+                                            .read<HomepageController>()
+                                            .editList(
+                                                name: selectedName ?? "",
+                                                date: date_controller.text,
+                                                amount: int.tryParse(
+                                                        amount_controller
+                                                            .text) ??
+                                                    0,
+                                                type: selectedType ?? "",
+                                                key: widget.editKey);
 
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              BottomNavigation(initialIndex: 0),
-                                        ));
-                                    log("added to hive");
+                                        context
+                                            .read<HomepageController>()
+                                            .total_balance(
+                                                selectedType ?? "",
+                                                int.tryParse(amount_controller
+                                                        .text) ??
+                                                    0);
+
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  BottomNavigation(
+                                                      initialIndex: 0),
+                                            ));
+                                        log("edited sucessfully");
+                                      }
+                                    } else {
+                                      if (_formKey.currentState!.validate()) {
+                                        int income_index = HomepageController
+                                            .income_list
+                                            .indexOf("${selectedName}");
+                                        int expense_index = HomepageController
+                                            .expense_list
+                                            .indexOf("${selectedName}");
+                                        await context
+                                            .read<HomepageController>()
+                                            .addData(
+                                                description:
+                                                    description_controller.text,
+                                                name: selectedName ?? "",
+                                                type: selectedType ?? "",
+                                                amount: int.tryParse(
+                                                        amount_controller
+                                                            .text) ??
+                                                    0,
+                                                date: date_controller.text,
+                                                imageIndex:
+                                                    selectedType == "INCOME"
+                                                        ? income_index
+                                                        : expense_index);
+                                      }
+                                      context
+                                          .read<HomepageController>()
+                                          .total_balance(
+                                              selectedType ?? "",
+                                              int.tryParse(
+                                                      amount_controller.text) ??
+                                                  0);
+
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BottomNavigation(
+                                                    initialIndex: 0),
+                                          ));
+                                      log("added to hive");
+                                    }
                                   },
 
                                   child: Container(
@@ -342,5 +503,26 @@ class _AddExpenseState extends State<AddExpense> {
         ),
       ),
     );
+  }
+
+  DateTime selectedDate = DateTime.now();
+  Future<void> selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2024, 1),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        String convertedDateTime =
+            "${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year.toString()}";
+        controller.value = TextEditingValue(text: convertedDateTime);
+      });
+      FocusScope.of(context).unfocus();
+    }
   }
 }
