@@ -1,3 +1,4 @@
+import 'package:expense_tracker/controller/graph_controller.dart';
 import 'package:expense_tracker/controller/homepage_controller.dart';
 import 'package:expense_tracker/view/add_expense/add_expense.dart';
 import 'package:expense_tracker/view/bottom_navigation/bottom_navigation.dart';
@@ -31,6 +32,9 @@ class _ExpenseTrackerState extends State<ExpenseTracker> {
       providers: [
         ChangeNotifierProvider(
           create: (context) => HomepageController(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => GraphController(),
         )
       ],
       child: MaterialApp(

@@ -1,10 +1,9 @@
-import 'dart:developer';
-
-import 'package:expense_tracker/controller/homepage_controller.dart';
+import 'package:expense_tracker/controller/graph_controller.dart';
 import 'package:expense_tracker/core/constants/color_constants.dart';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CustomGraphWidget extends StatefulWidget {
   const CustomGraphWidget({super.key});
@@ -14,46 +13,46 @@ class CustomGraphWidget extends StatefulWidget {
 }
 
 class _CustomGraphWidgetState extends State<CustomGraphWidget> {
-  List<FlSpot> spots = [];
-
   @override
   void initState() {
-    loadData();
     super.initState();
+    // context.read<GraphController>().loadData("INCOME");
   }
 
-  void loadData() {
-    List<FlSpot> spots2 = [];
+  // void loadData() {
+  //   List<FlSpot> spots2 = [];
 
-    HomepageController.keyList.forEach((key) {
-      var data = HomepageController.myBox.get(key);
-      log("data---$data");
+  //   HomepageController.keyList.forEach((key) {
+  //     var data = HomepageController.myBox.get(key);
+  //     log("data---$data");
 
-      if (data is Map && data['type'] == 'EXPENSE') {
-        try {
-          DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(data['date']);
-          int month = parsedDate.month - 1;
-          log("month---${month}");
-          double amount = data['amount'].toDouble();
-          spots2.add(FlSpot(month.toDouble(), amount));
-          log("spot2---$spots2");
-        } catch (e) {
-          log('Error  date: $e');
-        }
-      } else {
-        log('data error');
-      }
-    });
+  //     if (data is Map && data['type'] == 'EXPENSE') {
+  //       try {
+  //         DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(data['date']);
+  //         int month = parsedDate.month - 1;
+  //         log("month---${month}");
+  //         double amount = data['amount'].toDouble();
+  //         spots2.add(FlSpot(month.toDouble(), amount));
+  //         log("spot2---$spots2");
+  //       } catch (e) {
+  //         log('Error  date: $e');
+  //       }
+  //     } else {
+  //       log('data error');
+  //     }
+  //   });
 
-    setState(() {
-      spots = spots2;
-    });
-  }
+  //   setState(() {
+  //     spots = spots2;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
       child: AspectRatio(
         aspectRatio: 2,
         child: LineChart(
@@ -159,7 +158,7 @@ class _CustomGraphWidgetState extends State<CustomGraphWidget> {
             ),
             lineBarsData: [
               LineChartBarData(
-                spots: spots,
+                spots: GraphController.spots,
                 isCurved: true,
                 barWidth: 2,
                 belowBarData: BarAreaData(

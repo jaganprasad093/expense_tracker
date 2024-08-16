@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:expense_tracker/controller/graph_controller.dart';
 import 'package:expense_tracker/controller/homepage_controller.dart';
 import 'package:expense_tracker/core/constants/color_constants.dart';
 import 'package:expense_tracker/view/graph_page/widgets/custom_graph_widget.dart';
 import 'package:expense_tracker/view/homepage/widgets/transcaion_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GraphPage extends StatefulWidget {
   const GraphPage({super.key});
@@ -14,8 +16,15 @@ class GraphPage extends StatefulWidget {
 }
 
 class _GraphPageState extends State<GraphPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<GraphController>().loadData("INCOME");
+  }
+
   List type = ["INCOME", "EXPENSE"];
   String selectedType = "INCOME";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,24 +108,40 @@ class _GraphPageState extends State<GraphPage> {
           // add graph
 
           SliverToBoxAdapter(
-            child: Column(
-              children: [
-                DropdownButton(
-                  items: type
-                      .map(
-                        (types) => DropdownMenuItem<String>(
-                            value: types, child: Text(types)),
-                      )
-                      .toList(),
-                  onChanged: (value) => setState(() {
-                    selectedType;
-                  }),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                CustomGraphWidget(),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  DropdownButton(
+                    iconEnabledColor: ColorConstants.container_color,
+                    borderRadius: BorderRadius.circular(10),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: ColorConstants.container_color),
+                    value: selectedType,
+                    items: type
+                        .map(
+                          (types) => DropdownMenuItem<String>(
+                              value: types, child: Text(types)),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedType = value!;
+                        context.read<GraphController>().loadData(selectedType);
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  CustomGraphWidget(),
+                ],
+              ),
             ),
           ),
 
